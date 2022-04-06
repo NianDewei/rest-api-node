@@ -72,4 +72,4 @@ const destroy = (req, res) => {
     res.json(response)
 }
 
-export { index, store, update, updatePatch, destroy }
+module.exports = { index, store, update, updatePatch, destroy }

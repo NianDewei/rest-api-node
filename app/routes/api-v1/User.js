@@ -1,18 +1,16 @@
+const {Router} = require('express')
+const {index,store,update,updatePatch,destroy} = require('../../controller/UserController')
 
-import { Router } from "express"
-import { index, store, update, updatePatch, destroy }
-from "../../Controller/UserController.js"
+const UsersRouter = Router()
 
-const router = Router()
+UsersRouter.get("/", index)
 
-router.get("/", index)
+UsersRouter.post("/", store)
 
-router.post("/", store)
+UsersRouter.put("/:id", update)
 
-router.put("/:id", update)
+UsersRouter.patch("/", updatePatch)
 
-router.patch("/", updatePatch)
+UsersRouter.delete("/", destroy)
 
-router.delete("/", destroy)
-
-export default router
+module.exports = UsersRouter

@@ -1,8 +1,7 @@
+require('dotenv').config()
 //init serve with express
-import dotenv from 'dotenv'
-import Server from './config/server-mongo.js'
-dotenv.config()
+const Server = require('./config/server-mongo.js')
 
-const server = new Server()
-server.listen()
+const mongoDB = new Server()
+mongoDB.listen()
 
