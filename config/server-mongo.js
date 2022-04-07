@@ -1,6 +1,6 @@
-const cors = require('cors');
-const express = require('express');
-const UsersRouter = require('../app/routes/api-v1/User');
+import cors from "cors"
+import express from "express"
+import {usersRouter} from '../app/routes/api-v1/User.js'
 
 // clase para configurar el servidor
 class Server {
@@ -25,7 +25,7 @@ class Server {
 	}
 
 	routes() {
-		this.app.use(this.usersPath, UsersRouter )
+		this.app.use(this.usersPath, usersRouter)
 	}
 
 	listen() {
@@ -35,4 +35,4 @@ class Server {
 	}
 }
 
-module.exports = Server;
+export {Server} //export default Server

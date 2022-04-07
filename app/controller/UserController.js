@@ -46,7 +46,7 @@ const update = (req, res) => {
             id,
             attributes: {
                 name: name,
-                lastName: "Perez",
+                lastName: "Ordoñez Cango",
                 years: "20"
             }
         },
@@ -72,4 +72,4 @@ const destroy = (req, res) => {
     res.json(response)
 }
 
-module.exports = { index, store, update, updatePatch, destroy }
+export { index, store, update, updatePatch, destroy }

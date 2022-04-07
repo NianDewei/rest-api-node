@@ -1,16 +1,18 @@
-const {Router} = require('express')
-const {index,store,update,updatePatch,destroy} = require('../../controller/UserController')
 
-const UsersRouter = Router()
+import { Router } from "express"
+import { index, store, update, updatePatch, destroy }
+from "../../controller/UserController.js"
 
-UsersRouter.get("/", index)
+const usersRouter = Router()
 
-UsersRouter.post("/", store)
+usersRouter.get("/", index)
 
-UsersRouter.put("/:id", update)
+usersRouter.post("/", store)
 
-UsersRouter.patch("/", updatePatch)
+usersRouter.put("/:id", update)
 
-UsersRouter.delete("/", destroy)
+usersRouter.patch("/", updatePatch)
 
-module.exports = UsersRouter
+usersRouter.delete("/", destroy)
+
+export { usersRouter }
