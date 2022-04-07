@@ -8,7 +8,7 @@ const index = (req, res) => {
             q,name,apikey,page,limit
         },
         "jsonapi": {
-            "version": "1.0"
+            "version": "1.0.0"
         }
     }
     res.status(200).json(response)
@@ -47,7 +47,7 @@ const update = (req, res) => {
             attributes: {
                 name: name,
                 lastName: "Ordoñez Cango",
-                years: "20"
+                years: "28"
             }
         },
         "jsonapi": {
