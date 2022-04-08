@@ -1,11 +1,18 @@
+// librarie
+import bcrypt from "bcryptjs"
+
+// model User
+import User from "../models/User.js"
+
+// methos User Controller
 const index = (req, res) => {
-    const {q,name="No Name",apikey,page="1",limit} = req.query
+    const { q, name = "No Name", apikey, page = "1", limit } = req.query
 
     const response = {
         status: 200,
         message: "Welcome to my API | POST | Store",
-        query:{
-            q,name,apikey,page,limit
+        query: {
+            q, name, apikey, page, limit
         },
         "jsonapi": {
             "version": "1.0.0"
@@ -14,22 +21,29 @@ const index = (req, res) => {
     res.status(200).json(response)
 }
 
-const store = (req, res) => {
-    const { name, lastName, years } = req.body
+const store = async (req, res) => {
+
+    const { name, email, password, role } = req.body
+    const user = new User({ name, email, password, role })
+    // salt 10
+    const salt = bcrypt.genSaltSync()
+    // hash password
+    user.password = bcrypt.hashSync(password, salt)
+
+    await user.save()
+
+    const attributes = user
+
     const response = {
         status: 201,
         message: "Welcome to my API | POST | Store",
         data: {
             type: "Users",
-            id:15,
-            attributes: {
-                name: name,
-                lastName: lastName,
-                years: years
-            }
+            id: user._id,
+            attributes
         },
         "jsonapi": {
-            "version": "1.0"
+            "version": "1.0.0"
         }
     }
     res.status(201).json(response)
