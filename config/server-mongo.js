@@ -1,6 +1,7 @@
 import cors from "cors"
 import express from "express"
-import {usersRouter} from '../app/routes/api-v1/User.js'
+import { usersRouter } from '../routes/api-v1/User.js'
+import {toMongoDB} from "../database/mongodb.js"
 
 // clase para configurar el servidor
 class Server {
@@ -9,10 +10,16 @@ class Server {
 		this.port = process.env.PORT
 		this.usersPath = '/api/v1/users'
 
+		//connect to database
+		this.connectDB()
 		//Middlewares
 		this.middlewares()
 		//routes of my app
 		this.routes()
+	}
+
+	async connectDB() {
+		await toMongoDB()
 	}
 
 	middlewares() {
@@ -35,4 +42,4 @@ class Server {
 	}
 }
 
-export {Server} //export default Server
+export { Server } //export default Server
