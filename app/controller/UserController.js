@@ -5,15 +5,38 @@ import bcrypt from "bcryptjs"
 import User from "../models/User.js"
 
 // methos User Controller
-const index = (req, res) => {
-    const { q, name = "No Name", apikey, page = "1", limit } = req.query
+const index = async (req, res) => {
+    // const { q, name = "No Name", apikey, page = "1", limit } = req.query
+    const { limit = 5, to = 0 } = req.query
+    // const users = await User.find()
+    //     .skip(Number(to))
+    //     .limit(Number(limit))
+
+    // const totalUsers = await User.countDocuments()
+
+    const query = {status: true}
+
+    const [users,total] = await Promise.all([
+        User.find(query)
+            .skip(Number(to))
+            .limit(Number(limit)),
+        User.countDocuments(query)
+    ])
+
+    const data = users.map(user => {
+        const attributes = new User(user)
+        return {
+            type: "users",
+            id: user._id,
+            attributes
+        }
+    })
 
     const response = {
         status: 200,
         message: "Welcome to my API | POST | Store",
-        query: {
-            q, name, apikey, page, limit
-        },
+        total,
+        data,
         "jsonapi": {
             "version": "1.0.0"
         }
@@ -38,7 +61,7 @@ const store = async (req, res) => {
         status: 201,
         message: "Welcome to my API | POST | Store",
         data: {
-            type: "Users",
+            type: "users",
             id: user._id,
             attributes
         },
@@ -49,20 +72,25 @@ const store = async (req, res) => {
     res.status(201).json(response)
 }
 
-const update = (req, res) => {
+const update = async (req, res) => {
     const { id } = req.params
-    const { name, lastName, years } = req.body
+    const { _id, password, google, email, ...data } = req.body
+
+    // TODO : update password
+    if (password) {
+        const salt = bcrypt.genSaltSync()
+        data.password = bcrypt.hashSync(password, salt)
+    }
+
+    const attributes = await User.findByIdAndUpdate(id, data, { new: true })
+
     const response = {
         status: 200,
         message: "Welcome to my API | PUT | Update",
         data: {
-            type: "Users",
-            id,
-            attributes: {
-                name: name,
-                lastName: "Ordoñez Cango",
-                years: "28"
-            }
+            type: "users",
+            id: attributes._id,
+            attributes
         },
         "jsonapi": {
             "version": "1.0"
@@ -79,11 +107,27 @@ const updatePatch = (req, res) => {
     res.json(response)
 }
 
-const destroy = (req, res) => {
+const destroy = async (req, res) => {
+    const {id} = req.params
+    //borrar fisicamente el usuario de la base de datos
+    const user = await User.findByIdAndRemove(id)
+
     const response = {
-        message: "Welcome to my API | DELETE | Destroy"
+        status: 200,
+        message: "Welcome to my API | PUT | Update",
+        data: {
+            type: "users",
+            id: user._id,
+            attributes:{
+                name: user.name,
+            }
+        },
+        "jsonapi": {
+            "version": "1.0"
+        }
     }
-    res.json(response)
+
+    res.status(200).json(response)
 }
 
 export { index, store, update, updatePatch, destroy }
