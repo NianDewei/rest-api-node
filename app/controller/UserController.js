@@ -14,9 +14,9 @@ const index = async (req, res) => {
 
     // const totalUsers = await User.countDocuments()
 
-    const query = {status: true}
+    const query = { status: true }
 
-    const [users,total] = await Promise.all([
+    const [users, total] = await Promise.all([
         User.find(query)
             .skip(Number(to))
             .limit(Number(limit)),
@@ -24,10 +24,10 @@ const index = async (req, res) => {
     ])
 
     const data = users.map(user => {
-        const attributes = new User(user)
+        const attributes = user
         return {
             type: "users",
-            id: user._id,
+            uid: user._id,
             attributes
         }
     })
@@ -62,7 +62,7 @@ const store = async (req, res) => {
         message: "Welcome to my API | POST | Store",
         data: {
             type: "users",
-            id: user._id,
+            uid: user._id,
             attributes
         },
         "jsonapi": {
@@ -89,7 +89,7 @@ const update = async (req, res) => {
         message: "Welcome to my API | PUT | Update",
         data: {
             type: "users",
-            id: attributes._id,
+            uid: attributes._id,
             attributes
         },
         "jsonapi": {
@@ -108,26 +108,34 @@ const updatePatch = (req, res) => {
 }
 
 const destroy = async (req, res) => {
-    const {id} = req.params
-    //borrar fisicamente el usuario de la base de datos
-    const user = await User.findByIdAndRemove(id)
+
+    const { id } = req.params
+    // chnage status to false in the database 
+    const user = await User.findByIdAndUpdate(id, { status: false }, { new: true })
 
     const response = {
         status: 200,
-        message: "Welcome to my API | PUT | Update",
+        type: "success",
+        message: "User deleted.",
         data: {
             type: "users",
             id: user._id,
-            attributes:{
+            attributes: {
                 name: user.name,
+                status: user.status
             }
         },
         "jsonapi": {
-            "version": "1.0"
+            "version": "1.0.0"
         }
     }
 
     res.status(200).json(response)
+
+    //borrar fisicamente el usuario de la base de datos
+    // const user = await User.findByIdAndRemove(id)
+
 }
+
 
 export { index, store, update, updatePatch, destroy }

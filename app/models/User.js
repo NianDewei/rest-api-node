@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const {Schema,model} = mongoose
+const { Schema, model } = mongoose
 
 const UserSchema = Schema({
     name: {
@@ -35,8 +35,11 @@ const UserSchema = Schema({
 })
 
 UserSchema.methods.toJSON = function () {
-    const {__v,password, ...user} = this.toObject()
+    const { __v, password, _id, ...user } = this.toObject()
+    user.uid = _id
     return user
 }
+
+
 
 export default model("User", UserSchema);

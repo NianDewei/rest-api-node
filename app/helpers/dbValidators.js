@@ -1,7 +1,5 @@
 import Role from "../models/Role.js"
 import User from "../models/User.js"
-import mongoose from "mongoose"
-const { isValidObjectId } = mongoose
 
 /** 
  * @param {String} role
@@ -28,15 +26,28 @@ const isEmailExists = async email => {
 */
 const isUserExists = async id => {
 
+    const message = 'User is not exists'
+
     try {
         const userExist = await User.findById(id)
+        const isActive = isUserActive(userExist)
+
         if (!userExist) {
-            throw new Error('User is not Exists')
+            throw new Error(message)
         }
+
+        if (!isActive) {
+            throw new Error(message)
+        }
+
     } catch (error) {
-        throw new Error('User is not Exists')
+        throw new Error(message)
     }
 
+}
+
+const isUserActive = user => {
+    return user.status
 }
 
 export { isValidateRole, isEmailExists, isUserExists }

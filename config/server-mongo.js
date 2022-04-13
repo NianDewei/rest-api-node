@@ -2,6 +2,7 @@ import cors from "cors"
 import express from "express"
 import { usersRouter } from '../routes/api-v1/User.js'
 import {toMongoDB} from "../database/mongodb.js"
+import { authRouter } from "../routes/api-v1/Auth.js"
 
 // clase para configurar el servidor
 class Server {
@@ -9,6 +10,7 @@ class Server {
 		this.app = express()
 		this.port = process.env.PORT
 		this.usersPath = '/api/v1/users'
+		this.authPath = '/api/v1/auth'
 
 		//connect to database
 		this.connectDB()
@@ -33,6 +35,7 @@ class Server {
 
 	routes() {
 		this.app.use(this.usersPath, usersRouter)
+		this.app.use(this.authPath, authRouter)
 	}
 
 	listen() {

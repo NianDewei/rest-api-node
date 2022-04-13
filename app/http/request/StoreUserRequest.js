@@ -6,7 +6,6 @@ import MessageErrorRequest from "../middleware/MessageErrorRequest.js"
 // body validations
 const StoreUserRequest = [
     check('name', 'Name is required').not().isEmpty(),
-
     check('email').not().isEmpty()
         .withMessage('Email is required').
         isEmail().withMessage('Email is not valid')
@@ -22,4 +21,4 @@ const StoreUserRequest = [
     MessageErrorRequest
 ]
 
-export default StoreUserRequest 
+export {StoreUserRequest} 
