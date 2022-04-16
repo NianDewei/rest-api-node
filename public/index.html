@@ -1,12 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Rest Api | Node.js</title>
-	</head>
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Rest Api | Node.js</title>
+</head>
+
+<body>
+	<h1>Google Sing-In</h1>
+	<html>
+
 	<body>
-		<h1>Acceso Denegado</h1>
-	</body>
+
+		<div id="g_id_onload" data-client_id="44220813318-egcm0abb1ud963pbs9gfeqs2ka5m96oi.apps.googleusercontent.com"
+			data-callback="handleCredentialResponse">
+		</div>
+
+		<div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with"
+			data-shape="rectangular" data-logo_alignment="left">
+		</div>
+
+		<button id="google_signout">Signout</button>
+		<!-- script google -->
+		<script src="https://accounts.google.com/gsi/client" async defer></script>
+		<script>
+			function handleCredentialResponse(response) {
+
+				const body = { token_id: response.credential }
+
+				fetch('api/v1/auth/google', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(body)
+				})
+					.then(res => res.json())
+					.then(res => {
+						const { email } = res.data.attributes
+						localStorage.setItem('email', email)
+					})
+					.catch(err => console.log(err))
+
+			}
+
+			const signout = document.getElementById('google_signout')
+			signout.onclick = () => {
+				const email = localStorage.getItem('email')
+				google.accounts.id.disableAutoSelect()
+
+				google.accounts.id.revoke(email, (error, done) => {
+					localStorage.clear()
+					location.reload()
+				})
+			}
+		</script>
+	</body>11
+
+	</html>
+</body>
+
 </html>

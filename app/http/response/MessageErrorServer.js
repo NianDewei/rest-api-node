@@ -2,9 +2,9 @@ const MessageErrorServer = (params, res) => {
     /** 
      * Status for default error is 400
      */
-    return res.status(params.status).json({
+    return res.status(params.status || 500).json({
         status: params.status || 500,
-        type: 'warning',
+        type: 'info',
         error: {
             title: params.title || "Internal Server Error",
             detail: params.detail || "Sorry, something went wrong, please try again later, if the problem persists, please contact the administrator."

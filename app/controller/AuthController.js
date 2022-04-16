@@ -1,13 +1,17 @@
 // librarie
 import bcrypt from "bcryptjs"
 import { generateJWT } from "../helpers/generateJWT.js"
+import { googleVerify } from "../helpers/google-verify.js"
+import { MessageErrorClient, responseUserBlocked } from "../http/response/MessageErrorClient.js"
+import { MessageErrorServer } from "../http/response/MessageErrorServer.js"
+import { successUserCreatedOrAuth } from "../http/response/MessageSuccessfull.js"
 
 // model User
 import User from "../models/User.js"
 
 // methos Auth Controller
 
-const store = async (req, res) => {
+const login = async (req, res) => {
 
     // capture data from request
     const { email, password } = req.body
@@ -19,12 +23,12 @@ const store = async (req, res) => {
 
         // if user not exists
         if (!user) {
-            return res.status(400).send(
+            return res.status(404).json(
                 {
-                    status: 400,
+                    status: 404,
                     error: {
-                        title: "Email or password is invalid",
-                        detail: "If you have any problem, contact us."
+                        title: "Attention",
+                        detail: "Email or password is invalid"
                     }
                 }
             )
@@ -32,9 +36,9 @@ const store = async (req, res) => {
 
         //if user has status active
         if (!user.status) {
-            return res.status(400).send(
+            return res.status(403).json(
                 {
-                    status: 400,
+                    status: 403,
                     error: {
                         title: "User is not active",
                         detail: "Please, check your email to active your account, and try again. If you have any problem, contact us."
@@ -46,7 +50,7 @@ const store = async (req, res) => {
         // compare password
         const isMatch = bcrypt.compareSync(password, user.password)
         if (!isMatch) {
-            return res.status(400).send(
+            return res.status(400).json(
                 {
                     status: 400,
                     error: {
@@ -60,33 +64,70 @@ const store = async (req, res) => {
         // generate token
         const token = await generateJWT(user.id)
 
-        // send response
-        // res.send({ user, token })
+        // json response
+        // res.json({ user, token })
         const attributes = user.toJSON()
-
-        const response = {
-            status: 200,
-            message: "Welcome to Login | POST",
-            data: {
-                attributes,
-                token
-            },
-            jsonapi: {
-                "version": "1.0.0"
-            }
-        }
-        res.status(200).json(response)
+        const data = { attributes, token}
+        // response all data to client
+        return successUserCreatedOrAuth(data, res)
 
     } catch (error) {
         console.log(error)
-        return res.status(500).send(
-            {
-                status: 500,
-                error: "Sorry, something went wrong"
-            }
-        )
+        MessageErrorServer(params,res)
     }
 
 }
 
-export { store }
+// Google Sing - In  || Controller
+const googleSingIn = async (req, res) => {
+    const { token_id } = req.body
+    try {
+
+        // verify token
+        const { name, email, avatar } = await googleVerify(token_id)
+
+        // find user by email
+        let user = await User.findOne({ email })
+        // if user not exists
+        if (!user) {
+
+            const data = {
+                name,
+                email,
+                avatar,
+                role: "USER",
+                password: "google",
+                google: true
+            }
+            // create new user
+            user = new User(data)
+            // save new user
+            await user.save()
+            const attributes = user.toJSON()
+            // generate token
+            const token = await generateJWT(user.id)
+            const newUserData = { attributes, token, message: "Welcome to our app" }
+            // response all data to client
+            return successUserCreatedOrAuth(newUserData, res)
+        }
+
+        // if user has status false
+        if (!user.status) return MessageErrorClient(responseUserBlocked(user.name), res)
+        // if all ok, send response with token
+        // json response
+        const attributes = user.toJSON()
+        // generate token
+        const token = await generateJWT(user.id)
+        const data = { attributes, token, status: 200, message: "Welcome to our app" }
+        // response all data to client
+        return successUserCreatedOrAuth(data, res)
+
+    } catch (error) {
+        console.log(error.message, "Error in google sing in")
+        const response = { detail: "Please, verify your credentials" }
+        return MessageErrorClient(response, res)
+    }
+
+}
+
+export { login, googleSingIn }

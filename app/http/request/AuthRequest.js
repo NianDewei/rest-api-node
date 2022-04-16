@@ -15,4 +15,9 @@ const AuthRequest = [
     MessageErrorRequest
 ]
 
-export{AuthRequest} 
+const AuthGoogle = [
+    check('token_id').not().isEmpty(),
+    MessageErrorRequest
+]
+
+export { AuthRequest, AuthGoogle } 

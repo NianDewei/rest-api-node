@@ -32,6 +32,8 @@ const UserSchema = Schema({
         default: false
     }
 
+}, {
+    timestamps: true
 })
 
 UserSchema.methods.toJSON = function () {
