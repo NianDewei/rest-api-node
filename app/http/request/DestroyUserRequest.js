@@ -14,7 +14,7 @@ const DestroyUserRequest = [
     canRole('ADMIN'),
     check('id')
         .isMongoId()
-        .withMessage('Id is not valid')
+        .withMessage('Id is invalid')
         .custom(isUserExists),
 
     MessageErrorRequest

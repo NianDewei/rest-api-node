@@ -39,6 +39,7 @@
 				})
 					.then(res => res.json())
 					.then(res => {
+						console.log(res)
 						const { email } = res.data.attributes
 						localStorage.setItem('email', email)
 					})
@@ -58,6 +59,7 @@
 			}
 		</script>
 	</body>
+
 	</html>
 </body>
 

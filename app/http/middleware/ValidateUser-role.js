@@ -49,7 +49,9 @@ const canRole = (...roles) => {
         }
 
         const { role, name } = req.userAuth;
-        if (!roles.includes(role)) return MessageErrorClient(responseForbidden(name), res)
+        
+        const params = { name, type: "categorys" }
+        if (!roles.includes(role)) return MessageErrorClient(responseForbidden(params), res)
         next()
     }
 }

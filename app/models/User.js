@@ -4,7 +4,8 @@ const { Schema, model } = mongoose
 const UserSchema = Schema({
     name: {
         type: String,
-        required: [true, "Name is required"]
+        required: [true, "Name is required"],
+        lowercase: true,
     },
     email: {
         type: String,
@@ -41,7 +42,5 @@ UserSchema.methods.toJSON = function () {
     user.uid = _id
     return user
 }
-
-
 
 export default model("User", UserSchema);

@@ -1,5 +1,7 @@
 import Role from "../models/Role.js"
 import User from "../models/User.js"
+import Category from "../models/Category.js"
+import Product from "../models/Product.js"
 
 /** 
  * @param {String} role
@@ -50,4 +52,75 @@ const isUserActive = user => {
     return user.status
 }
 
-export { isValidateRole, isEmailExists, isUserExists }
+const existsCategory = async id => {
+    const message = 'Category is not exists'
+
+    try {
+        const categoryExist = await Category.findById(id)
+
+        if (!categoryExist) {
+            throw new Error(message)
+        }
+
+        if (!categoryExist.status) {
+            throw new Error(message)
+        }
+
+    } catch (error) {
+        throw new Error(message)
+    }
+}
+
+const existsNameCategory = async name => {
+    const message = 'This name categiry is registered'
+    const categoryExist = await Category.findOne({ name })
+
+    if (categoryExist) {
+        throw new Error(message)
+    }
+
+}
+
+
+
+const existsProduct = async id => {
+    const message = 'Product is not exists'
+
+    try {
+        const categoryExist = await Product.findById(id)
+
+        if (!categoryExist) {
+            throw new Error(message)
+        }
+
+        if (!categoryExist.status) {
+            throw new Error(message)
+        }
+
+    } catch (error) {
+        throw new Error(message)
+    }
+}
+
+
+
+const existsNameProduct = async name => {
+    const message = 'This name product is registered'
+    const categoryExist = await Product.findOne({ name })
+
+    if (categoryExist) {
+        throw new Error(message)
+    }
+
+}
+
+
+export {
+    isValidateRole,
+    isEmailExists,
+    isUserExists,
+    existsCategory,
+    existsProduct,
+    existsNameCategory,
+    existsNameProduct
+}

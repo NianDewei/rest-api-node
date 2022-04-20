@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 const {Schema,model} = mongoose
 
-const RoleSchema = Schema({
+const RoleSchema =  Schema({
     name: {
         type: String,
         required: [true, "Name is required"]

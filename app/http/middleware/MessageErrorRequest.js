@@ -6,6 +6,7 @@ const MessageErrorRequest = (req,res, next) => {
     if (!errors.isEmpty()) {
         return res.status(422).json({
             status: 422,
+            type:'error',
             errors: errors.array(),
             "jsonapi": {
                 "version": "1.0.0"

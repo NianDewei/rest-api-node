@@ -1,5 +1,6 @@
 // librarie
 import bcrypt from "bcryptjs"
+import { successShowOneResource } from "../http/response/MessageSuccessfull.js"
 
 // model User
 import User from "../models/User.js"
@@ -16,7 +17,7 @@ const index = async (req, res) => {
 
     const query = { status: true }
 
-    const [users, total] = await Promise.all([
+    const [users, count] = await Promise.all([
         User.find(query)
             .skip(Number(to))
             .limit(Number(limit)),
@@ -33,14 +34,13 @@ const index = async (req, res) => {
     })
 
     const response = {
-        status: 200,
-        message: "Welcome to my API | POST | Store",
-        total,
+        count,
         data,
         "jsonapi": {
             "version": "1.0.0"
         }
     }
+
     res.status(200).json(response)
 }
 
@@ -72,6 +72,13 @@ const store = async (req, res) => {
     res.status(201).json(response)
 }
 
+const show = async (req, res) => {
+    const { id } = req.params
+    const user = await User.findById(id)
+    const data = {attributes: user,model:"users"}
+    successShowOneResource(data,res)
+}
+
 const update = async (req, res) => {
     const { id } = req.params
     const { _id, password, google, email, ...data } = req.body
@@ -82,22 +89,10 @@ const update = async (req, res) => {
         data.password = bcrypt.hashSync(password, salt)
     }
 
-    const attributes = await User.findByIdAndUpdate(id, data, { new: true })
+    const user = await User.findByIdAndUpdate(id, data, { new: true })
 
-    const response = {
-        status: 200,
-        message: "Welcome to my API | PUT | Update",
-        data: {
-            type: "users",
-            uid: attributes._id,
-            attributes
-        },
-        "jsonapi": {
-            "version": "1.0"
-        }
-    }
-
-    res.status(200).json(response)
+    const collection = {attributes: user,model:"users"}
+    successShowOneResource(collection,res)
 }
 
 const updatePatch = (req, res) => {
@@ -138,4 +133,4 @@ const destroy = async (req, res) => {
 }
 
 
-export { index, store, update, updatePatch, destroy }
+export { index, store, update, show, destroy }

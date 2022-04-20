@@ -7,7 +7,8 @@ const MessageErrorClient = (params, res) => {
         type: params.type || "error",
         error: {
             title: params.title || "Bad Request",
-            detail: params.detail || "The Server could not understand the request due to invalid syntax"
+            detail: params.detail || "The Server could not understand the request due to invalid syntax",
+            location: params.location || "body",
         }
     })
 }
@@ -16,7 +17,7 @@ const MessageErrorClient = (params, res) => {
  *  Message Error Client, when the user is not authorized 
 */
 
-const responseForbidden = name => {
+const responseForbidden = params => {
     /**
      * Wait name for the user
      * @type {string}
@@ -25,7 +26,7 @@ const responseForbidden = name => {
         status: 403,
         type: "warning",
         title: "Forbidden",
-        detail: `${name}, you are not authorized to delete users`
+        detail: `${params.name}, you are not authorized for delete ${params.type}`
     }
 }
 

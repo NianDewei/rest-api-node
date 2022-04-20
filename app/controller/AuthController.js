@@ -67,7 +67,7 @@ const login = async (req, res) => {
         // json response
         // res.json({ user, token })
         const attributes = user.toJSON()
-        const data = { attributes, token}
+        const data = { code:200,message: "Welcome to our app",attributes, token}
         // response all data to client
         return successUserCreatedOrAuth(data, res)
 
@@ -124,8 +124,8 @@ const googleSingIn = async (req, res) => {
 
     } catch (error) {
         console.log(error.message, "Error in google sing in")
-        const response = { detail: "Please, verify your credentials" }
-        return MessageErrorClient(response, res)
+        const response = {title: "Error in google sing in"}
+        return MessageErrorServer(response, res)
     }
 
 }
