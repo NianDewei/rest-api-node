@@ -1,4 +1,5 @@
 // model User
+import { successShowAllResource, successShowOneResource } from "../http/response/MessageSuccessfull.js"
 import Category from "../models/Category.js"
 
 // methods User Controller
@@ -15,28 +16,8 @@ const index = async (req, res) => {
         Category.countDocuments(query)
     ])
 
-    const data = categorys.map(category => {
-        const attributes = category
-        return {
-            type: "categorys",
-            id: category.id,
-            attributes,
-            links:{self: `/api/v1/categorys/${category.id}`},
-            // relationships with user
-        }
-    })
-
-    const response = {
-        status: 200,
-        message: "Welcome to my API | GET | Index | Category",
-        total,
-        data,
-        links:{ self: `/api/v1/categorys?limit=${limit}&to=${to}` },
-        jsonapi: {
-            version: "1.0.0"
-        }
-    }
-    res.status(200).json(response)
+   const data = {attributes:categorys,model:"categorys"}
+   successShowAllResource(data,res)
 }
 
 const store = async (req, res) => {
@@ -69,22 +50,9 @@ const show = async (req, res) => {
     const { id } = req.params
     const category = await Category.findById(id)
                                     .populate("user", "name")
-
-    const response = {
-        status: 200,
-        message: "Welcome to my API | GET | Show",
-        data: {
-            type: "categorys",
-            id: category.id,
-            attributes: category,
-            links:{self: `/api/v1/categorys/${category.id}`},
-        },
-        "jsonapi": {
-            "version": "1.0.0"
-        }
-    }
-
-    res.status(200).json(response)
+    const data = {attributes: category,model: "categorys"}
+    // TODO: send data and response
+    successShowOneResource(data,res)
 }
 
 const update = async (req, res) => {
@@ -104,7 +72,7 @@ const update = async (req, res) => {
             type: "categorys",
             id: attributes.id,
             attributes,
-            links:{self: `/api/v1/categorys/${attributes.id}`},
+            links:{self: `${process.env.HOST_NAME}/api/v1/categorys/${attributes.id}`},
         },
         "jsonapi": {
             "version": "1.0.0"

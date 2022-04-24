@@ -46,13 +46,13 @@ const successCreated = (data, res) => {
 	return res.status(201).json(response)
 }
 
-const successShowOneResource = (data, res) => {
+const successShowOneResource = async (data, res) => {
 	/**
 	 * data is an object
 	 * @attributes is an objec
 	 * @model is a string | name of model
 	 */
-	const { attributes, model } = data
+	const { attributes, model } = await data
 	const isCollectionEmpaty = Boolean(attributes)
 
 	if (!isCollectionEmpaty) {
@@ -104,6 +104,7 @@ const successShowOneResource = (data, res) => {
 
 	res.status(200).json(response)
 }
+
 
 const successShowAllResource = (data, res) => {
 	/**

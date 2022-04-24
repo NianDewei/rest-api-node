@@ -1,5 +1,6 @@
 // methods the controller for Product || index , show , create , update , delete
 
+import { successShowAllResource, successShowOneResource } from "../http/response/MessageSuccessfull.js"
 import Product from "../models/Product.js"
 
 // list all products with pagination
@@ -16,28 +17,8 @@ const index = async (req, res) => {
         Product.countDocuments(query)
     ])
 
-    const data = products.map(product => {
-        const attributes = product
-        return {
-            type: "products",
-            id: product.id,
-            attributes,
-            links: { self: `/api/v1/products/${product.id}` },
-            // relationships with user
-        }
-    })
-
-    const response = {
-        status: 200,
-        message: "Welcome to my API | GET | Index | Product",
-        total,
-        data,
-        links: { self: `/api/v1/products?limit=${limit}&to=${to}` },
-        jsonapi: {
-            version: "1.0.0"
-        }
-    }
-    res.status(200).json(response)
+    const data = {attributes:products,model:"products"}
+    successShowAllResource(data,res)
 }
 
 // show a product
@@ -45,21 +26,9 @@ const show = async (req, res) => {
     const { id } = req.params
 
     const product = await Product.findById(id)
+    const data = {attributes:product,model:"products"}
+    successShowOneResource(data,res)
 
-    const response = {
-        status: 200,
-        message: "Welcome to my API | GET | Show | Product",
-        data: {
-            type: "products",
-            id: product.id,
-            attributes: product,
-            links: { self: `/api/v1/products/${product.id}` },
-        },
-        jsonapi: {
-            version: "1.0.0"
-        }
-    }
-    res.status(200).json(response)
 }
 // store a product
 const store = async (req, res) => {
@@ -97,21 +66,8 @@ const update = async (req, res) => {
     const data = { name, description, price, category, user }
 
     const product = await Product.findByIdAndUpdate(id, data, { new: true })
-
-    const response = {
-        status: 200,
-        message: "Welcome to my API | PUT | Update",
-        data: {
-            type: "products",
-            id: product.id,
-            attributes: product,
-            links: { self: `/api/v1/products/${product.id}` },
-        },
-        jsonapi: {
-            version: "1.0.0"
-        }
-    }
-    res.status(200).json(response)
+    data = {attributes:product,model:"products"}
+    successShowOneResource(data,res)
 }
 
 // delete a product

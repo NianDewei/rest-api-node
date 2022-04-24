@@ -1,6 +1,6 @@
 // librarie
 import bcrypt from "bcryptjs"
-import { successShowOneResource } from "../http/response/MessageSuccessfull.js"
+import { successShowOneResource, successShowAllResource } from "../http/response/MessageSuccessfull.js"
 
 // model User
 import User from "../models/User.js"
@@ -24,24 +24,27 @@ const index = async (req, res) => {
         User.countDocuments(query)
     ])
 
-    const data = users.map(user => {
-        const attributes = user
-        return {
-            type: "users",
-            uid: user._id,
-            attributes
-        }
-    })
+    const data = { attributes: users, model: "users" }
+    successShowAllResource(data, res)
 
-    const response = {
-        count,
-        data,
-        "jsonapi": {
-            "version": "1.0.0"
-        }
-    }
+    // const data = users.map(user => {
+    //     const attributes = user
+    //     return {
+    //         type: "users",
+    //         uid: user._id,
+    //         attributes
+    //     }
+    // })
 
-    res.status(200).json(response)
+    // const response = {
+    //     count,
+    //     data,
+    //     "jsonapi": {
+    //         "version": "1.0.0"
+    //     }
+    // }
+
+    // res.status(200).json(response)
 }
 
 const store = async (req, res) => {
@@ -75,8 +78,8 @@ const store = async (req, res) => {
 const show = async (req, res) => {
     const { id } = req.params
     const user = await User.findById(id)
-    const data = {attributes: user,model:"users"}
-    successShowOneResource(data,res)
+    const data = { attributes: user, model: "users" }
+    successShowOneResource(data, res)
 }
 
 const update = async (req, res) => {
@@ -91,8 +94,8 @@ const update = async (req, res) => {
 
     const user = await User.findByIdAndUpdate(id, data, { new: true })
 
-    const collection = {attributes: user,model:"users"}
-    successShowOneResource(collection,res)
+    const collection = { attributes: user, model: "users" }
+    successShowOneResource(collection, res)
 }
 
 const updatePatch = (req, res) => {
