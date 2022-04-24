@@ -1,13 +1,17 @@
 import cors from "cors"
 import express from "express"
+import fileUpload from "express-fileupload"
 
 import { toMongoDB } from "../database/mongodb.js"
 // routes
-import { usersRouter } from '../routes/api-v1/User.js'
-import { authRouter } from "../routes/api-v1/Auth.js"
-import { categorysRouter } from "../routes/api-v1/Category.js"
-import { productsRouter } from "../routes/api-v1/Product.js"
-import{searchsRouter} from "../routes/api-v1/Search.js"
+import {
+	usersRouter,
+	authRouter,
+	categorysRouter,
+	productsRouter,
+	searchsRouter,
+	uploadsRouter
+} from "../routes/api-v1/index.js"
 
 // clase para configurar el servidor
 class Server {
@@ -17,11 +21,12 @@ class Server {
 		this.host_name = process.env.HOST_NAME
 
 		this.paths = {
-			usersPath: 		"/api/v1/users",
-			authPath: 		"/api/v1/auth",
-			categorysPath: 	"/api/v1/categorys",
-			productsPath: 	"/api/v1/products",
-			searchsPath: 	"/api/v1/searchs",
+			usersPath: "/api/v1/users",
+			authPath: "/api/v1/auth",
+			categorysPath: "/api/v1/categorys",
+			productsPath: "/api/v1/products",
+			searchsPath: "/api/v1/searchs",
+			uploadsPath: "/api/v1/uploads",
 		}
 
 		//connect to database
@@ -43,14 +48,22 @@ class Server {
 		this.app.use(express.json())
 		//dirname public
 		this.app.use(express.static('public'))
+		// File Uploads 
+		this.app.use(fileUpload({
+			createParentPath: true,
+			useTempFiles: true,
+			tempFileDir: '/tmp/'
+		}))
 	}
 
 	routes() {
+		// routes
 		this.app.use(this.paths.usersPath, usersRouter)
 		this.app.use(this.paths.authPath, authRouter)
 		this.app.use(this.paths.categorysPath, categorysRouter)
 		this.app.use(this.paths.productsPath, productsRouter)
 		this.app.use(this.paths.searchsPath, searchsRouter)
+		this.app.use(this.paths.uploadsPath, uploadsRouter)
 	}
 
 	listen() {

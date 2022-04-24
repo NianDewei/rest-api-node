@@ -10,6 +10,10 @@ const ProductSchema = Schema(
             required: [true, "Name is required"],
             unique: true,
         },
+        image: {
+            type: String,
+            default: "default.jpg"
+        },
         description: {
             type: String,
             required: [true, "Description is required"]
@@ -44,7 +48,7 @@ const ProductSchema = Schema(
 
 )
 
-ProductSchema.methods.toJSON =  function () {
+ProductSchema.methods.toJSON = function () {
     const { __v, status, ...product } = this.toObject()
     // user.uid = user._id
     // product.user = user

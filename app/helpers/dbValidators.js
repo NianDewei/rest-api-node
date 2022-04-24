@@ -114,6 +114,36 @@ const existsNameProduct = async name => {
 
 }
 
+// Validate collections allowed
+const allowedCollections = (collections = '', allowed = []) => {
+    const include = allowed.includes(collections)
+    if (!include) {
+        throw new Error('Collections is not allowed | collections: ' + allowed)
+    }
+
+    return true
+}
+
+const validateFiles = (req, res, next) => {
+    if (!req.files || Object.keys(req.files).length === 0 || !req.files.archive) {
+        return res.status(422).json({
+            error: {
+                title: "File not found",
+                detail: 'No files were uploaded, verify if the file is not empty.',
+                params:'archive',
+                location: '/uploads'
+            },
+            jsonapi: {
+                version: "1.0.0"
+            }
+        })
+    }
+
+    // pass validation
+    next()
+}
+
+
 
 export {
     isValidateRole,
@@ -122,5 +152,7 @@ export {
     existsCategory,
     existsProduct,
     existsNameCategory,
-    existsNameProduct
+    existsNameProduct,
+    allowedCollections,
+    validateFiles
 }
